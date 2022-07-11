@@ -1,32 +1,19 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 export default {
   data() {
     return {
-      editoras: [
-        {
-          id_editora: "630c1d03-cb59-460a-89b8-cca1d42c1bc6",
-          nome: "Companhia das Letras",
-          site_lf: "https://www.companhiadasletras.com.br",
-          site_lnf: "www.companhiadasletras.com.br",
-        },
-        {
-          id_editora: "597ceef8-36ac-4b0e-859e-77551c9818c0",
-          nome: "Editora Rocco",
-          site_lf: "https://www.rocco.com.br/",
-          site_lnf: "www.rocco.com.br",
-        },
-        {
-          id_editora: "8ecb8a1e-5114-496d-9bee-1308dccf4b87",
-          nome: "Editora Arqueiro",
-          site_lf: "https://www.editoraarqueiro.com.br",
-          site_lnf: "www.editoraarqueiro.com.br",
-        },
-      ],
+      editoras: [],
       nova_editora: { nome: "", site_lf: "", site_lnf: "" },
       indice_editar: -1,
     };
   },
+  async created() {
+    const editoras = await axios.get("http://localhost:4000/editoras");
+    this.editoras = editoras.data;
+  },
+
   methods: {
     salvar() {
       if (this.nova_editora.nome !== "" && this.nova_editora.site_lnf !== "") {
@@ -91,7 +78,7 @@ export default {
         <tbody>
           <tr v-for="editora in editoras" :key="editora.id">
             <td>
-              {{ editora.id_editora }}
+              {{ editora.id }}
             </td>
             <td>
               {{ editora.nome }}

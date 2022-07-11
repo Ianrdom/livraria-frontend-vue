@@ -1,27 +1,19 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 export default {
   data() {
     return {
-      autores: [
-        {
-          id_autor: "4b95ec3f-c3a0-49d9-971d-b3696657fbbd",
-          nome: "Andrzej Sapkowski",
-        },
-        {
-          id_autor: "ec38e964-9ddc-4d39-b6e3-688e239f8da9",
-          nome: "RONALD HUTTON",
-        },
-        {
-          id_autor: "d48aca58-0c61-46fc-896f-9ea630a90cfb",
-          nome: "Antoine de Saint-Exupéry",
-        },
-      ],
+      autores: [],
       novo_autor: {
         nome: "",
       },
       indice_editar: -1,
     };
+  },
+  async created() {
+    const autores = await axios.get("http://localhost:4000/autores");
+    this.autores = autores.data;
   },
   methods: {
     salvar() {
@@ -78,7 +70,7 @@ export default {
         <tbody>
           <tr v-for="autor in autores" :key="autor.id">
             <td>
-              {{ autor.id_autor }}
+              {{ autor.id }}
             </td>
             <td>
               {{ autor.nome }}
