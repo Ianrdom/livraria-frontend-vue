@@ -1,5 +1,5 @@
 <script>
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 export default {
   data() {
@@ -16,21 +16,31 @@ export default {
     this.autores = autores.data;
   },
   methods: {
-    salvar() {
+    async salvar() {
       if (this.novo_autor.nome !== "") {
-        if (this.novo_autor.id_autor) {
+        if (this.novo_autor.id) {
+          await axios.patch(
+            `http://localhost:4000/autores/${this.novo_autor.id}`,
+            {
+              nome: this.novo_autor.nome,
+            }
+          );
           this.autores.splice(this.indice_editar, 1, this.novo_autor);
           this.indice_editar = -1;
         } else {
-          this.novo_autor.id_autor = uuidv4();
-          this.autores.push(this.novo_autor);
+          const autor_criada = await axios.post(
+            "http://localhost:4000/autores",
+            this.novo_autor
+          );
+          this.autores.push(autor_criada.data);
         }
         this.novo_autor = {
-          descricao: "",
+          nome: "",
         };
       }
     },
-    excluir(autor) {
+    async excluir(autor) {
+      await axios.delete(`http://localhost:4000/autores/${autor.id}`);
       const indice = this.autores.indexOf(autor);
       this.autores.splice(indice, 1);
     },
@@ -63,7 +73,7 @@ export default {
         <thead>
           <tr>
             <th>ID-autor</th>
-            <th>Descrição</th>
+            <th>Nome</th>
             <th>Ações</th>
           </tr>
         </thead>

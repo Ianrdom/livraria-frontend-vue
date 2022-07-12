@@ -1,11 +1,14 @@
 <script>
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 export default {
   data() {
     return {
       editoras: [],
-      nova_editora: { nome: "", site_lf: "", site_lnf: "" },
+      nova_editora: {
+        nome: "",
+        site_lnf: "",
+      },
       indice_editar: -1,
     };
   },
@@ -15,14 +18,29 @@ export default {
   },
 
   methods: {
-    salvar() {
+    async salvar() {
       if (this.nova_editora.nome !== "" && this.nova_editora.site_lnf !== "") {
-        if (this.nova_editora.id_editora) {
+        if (this.nova_editora.id) {
+          await axios.patch(
+            `http://localhost:4000/editoras/${this.nova_editora.id}`,
+            {
+              nome: this.nova_editora.nome,
+              site_lnf: this.nova_editora.site_lnf,
+              site_lf: "https://" + this.nova_editora.site_lnf,
+            }
+          );
           this.editoras.splice(this.indice_editar, 1, this.nova_editora);
           this.indice_editar = -1;
         } else {
-          this.nova_editora.id_editora = uuidv4();
-          this.editoras.push(this.nova_editora);
+          const editora_criada = await axios.post(
+            "http://localhost:4000/editoras",
+            {
+              nome: this.nova_editora.nome,
+              site_lnf: this.nova_editora.site_lnf,
+              site_lf: "https://" + this.nova_editora.site_lnf,
+            }
+          );
+          this.editoras.push(editora_criada.data);
         }
         this.nova_editora = {
           nome: "",
@@ -30,7 +48,8 @@ export default {
         };
       }
     },
-    excluir(editora) {
+    async excluir(editora) {
+      await axios.delete(`http://localhost:4000/editoras/${editora.id}`);
       const indice = this.editoras.indexOf(editora);
       this.editoras.splice(indice, 1);
     },
