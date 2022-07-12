@@ -17,7 +17,7 @@ export default {
       <span>|</span>
       <span> <RouterLink to="/livros">Livros</RouterLink> </span>
       <span>|</span>
-      <span> <RouterLink to="/cartegorias">Cartegorias</RouterLink> </span>
+      <span> <RouterLink to="/categorias">Categorias</RouterLink> </span>
       <span>|</span>
       <span> <RouterLink to="/autores">Autores</RouterLink> </span>
     </div>

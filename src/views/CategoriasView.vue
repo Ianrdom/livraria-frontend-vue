@@ -28,18 +28,19 @@ export default {
           this.categorias.splice(this.indice_editar, 1, this.nova_categoria);
           this.indice_editar = -1;
         } else {
-          await axios.post(
+          const categoria_criada = await axios.post(
             "http://localhost:4000/categorias",
             this.nova_categoria
           );
-          this.categorias.push(this.nova_categoria);
+          this.categorias.push(categoria_criada.data);
         }
         this.nova_categoria = {
           nome: "",
         };
       }
     },
-    excluir(categoria) {
+    async excluir(categoria) {
+      await axios.delete(`http://localhost:4000/categorias/${categoria.id}`);
       const indice = this.categorias.indexOf(categoria);
       this.categorias.splice(indice, 1);
     },
