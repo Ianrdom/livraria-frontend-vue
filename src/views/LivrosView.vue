@@ -1,57 +1,63 @@
 <script>
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 export default {
   data() {
     return {
       livros: [],
-      novo_livro: {
-        titulo: "",
-        preco: "",
-        editora: "",
-        categoria: "",
-        autor: "",
-      },
+      livro: {},
+      autores: [],
+      editoras: [],
+      categorias: [],
       indice_editar: -1,
     };
   },
   async created() {
-    const livros = await axios.get("http://localhost:4000/livros");
-    this.livros = livros.data;
+    await this.buscarTodosOsLivros();
+    const editoras = await axios.get("http://localhost:4000/editoras");
+    this.editoras = editoras.data;
+    const categorias = await axios.get("http://localhost:4000/categorias");
+    this.categorias = categorias.data;
+    const autores = await axios.get("http://localhost:4000/autores");
+    this.autores = autores.data;
   },
   methods: {
+    async buscarTodosOsLivros() {
+      const livros = await axios.get(
+        "http://localhost:4000/livros?expand=time"
+      );
+      this.livros = livros.data;
+    },
+
     async salvar() {
       if (
-        this.novo_livro.titulo !== "" &&
-        this.novo_livro.preco !== "" &&
-        this.novo_livro.editora !== "" &&
-        this.novo_livro.autor !== "" &&
-        this.novo_livro.categoria !== ""
+        this.livro.titulo !== "" &&
+        this.livro.preco !== "" &&
+        this.livro.editora !== "" &&
+        this.livro.autor !== "" &&
+        this.livro.categoria !== ""
       ) {
-        if (this.novo_livro.id) {
-          this.livros.splice(this.indice_editar, 1, this.novo_livro);
-          this.indice_editar = -1;
+        if (this.livro.id) {
+          await axios.patch(
+            `http://localhost:4000/livros/${this.livro.id}`,
+            this.livro
+          );
+          await this.buscarTodosOsLivros();
         } else {
-          this.novo_livro.id = uuidv4();
-          this.livros.push(this.novo_livro);
+          await axios.post(`http://localhost:4000/livros`, this.livro);
+          await this.buscarTodosOsLivros();
         }
-        this.novo_livro = {
-          titulo: "",
-          preco: "",
-          editora: "",
-          categoria: "",
-          autor: "",
-        };
+        this.livro = {};
       }
     },
     async excluir(livro) {
-      const indice = this.livros.indexOf(livro);
-      this.livros.splice(indice, 1);
+      await axios.delete(`http://localhost:4000/livros/${livro.id}`);
+      await this.buscarTodosOsLivros();
     },
-    async editar(livro) {
+    editar(livro) {
       const indice = this.livros.indexOf(livro);
       this.indice_editar = indice;
-      Object.assign(this.novo_livro, livro);
+      Object.assign(this.livro, livro);
     },
   },
 };
@@ -64,33 +70,40 @@ export default {
     <div class="form-input">
       <input
         @keyup.enter="salvar"
-        v-model="novo_livro.titulo"
+        v-model="livro.titulo"
         type="text"
         placeholder="Nome do livro"
         class="input-menor"
       />
-      <select name="editoras" class="input-menor" v-model="novo_livro.editora">
-        <option value="1">Companhia das Letras</option>
-        <option value="2">Editora Rocco</option>
-        <option value="3">Editora Arqueiro</option>
+      <select v-model="livro.editoraId">
+        <option value="" disabled selected>Nome da editora</option>
+        <option
+          v-for="editora in editoras"
+          :key="editora.id"
+          :value="editora.id"
+        >
+          {{ editora.nome }}
+        </option>
       </select>
-      <select
-        name="categorias"
-        class="input-menor"
-        v-model="novo_livro.categoria"
-      >
-        <option value="1">Drama</option>
-        <option value="2">Medo</option>
-        <option value="3">Ficção</option>
+      <select v-model="livro.categoriaId">
+        <option value="" disabled selected>Nome da categoria</option>
+        <option
+          v-for="categoria in categorias"
+          :key="categoria.id"
+          :value="categoria.id"
+        >
+          {{ categoria.nome }}
+        </option>
       </select>
-      <select name="autor" class="input-menor" v-model="novo_livro.autor">
-        <option value="1">Andrzej Sapkowski</option>
-        <option value="2">RONALD HUTTON</option>
-        <option value="3">Antoine de Saint-Exupéry</option>
+      <select v-model="livro.autorId">
+        <option value="" disabled selected>Nome da autor</option>
+        <option v-for="autor in autores" :key="autor.id" :value="autor.id">
+          {{ autor.nome }}
+        </option>
       </select>
       <input
         @keyup.enter="salvar"
-        v-model="novo_livro.preco"
+        v-model="livro.preco"
         type="number"
         placeholder="Preco do livro"
         class="input-menor"
@@ -119,13 +132,13 @@ export default {
               {{ livro.titulo }}
             </td>
             <td>
-              {{ livro.autor }}
+              {{ livro.autor.nome }}
             </td>
             <td>
-              {{ livro.categoria }}
+              {{ livro.categoria.nome }}
             </td>
             <td>
-              {{ livro.editora }}
+              {{ livro.editora.nome }}
             </td>
             <td>R$ {{ livro.preco }}</td>
             <td>
