@@ -22,7 +22,9 @@ export default {
   },
   methods: {
     async buscarTodosOsLivros() {
-      const livros = await axios.get("http://localhost:4000/livros");
+      const livros = await axios.get(
+        "http://localhost:4000/livros?expand=editora&expand=categoria&expand=autore"
+      );
       this.livros = livros.data;
     },
 
@@ -84,7 +86,7 @@ export default {
           {{ categoria.nome }}
         </option>
       </select>
-      <select v-model="livro.autorId">
+      <select v-model="livro.autoreId">
         <option value="" disabled selected>Nome da autor</option>
         <option v-for="autor in autores" :key="autor.id" :value="autor.id">
           {{ autor.nome }}
@@ -105,9 +107,9 @@ export default {
           <tr>
             <th>ID-livro</th>
             <th>Nome</th>
-            <th>Autor-id</th>
-            <th>Cartegoria-id</th>
-            <th>Editora-Id</th>
+            <th>Autor</th>
+            <th>Cartegoria</th>
+            <th>Editora</th>
             <th>Preço</th>
             <th>Ações</th>
           </tr>
@@ -121,13 +123,13 @@ export default {
               {{ livro.titulo }}
             </td>
             <td>
-              {{ livro.autorId }}
+              {{ livro.autore.nome }}
             </td>
             <td>
-              {{ livro.categoriaId }}
+              {{ livro.categoria.nome }}
             </td>
             <td>
-              {{ livro.editoraId }}
+              {{ livro.editora.nome }}
             </td>
             <td>R$ {{ livro.preco }}</td>
             <td>
