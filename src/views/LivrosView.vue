@@ -1,5 +1,4 @@
 <script>
-// import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 export default {
   data() {
@@ -23,32 +22,22 @@ export default {
   },
   methods: {
     async buscarTodosOsLivros() {
-      const livros = await axios.get(
-        "http://localhost:4000/livros?expand=time"
-      );
+      const livros = await axios.get("http://localhost:4000/livros");
       this.livros = livros.data;
     },
 
     async salvar() {
-      if (
-        this.livro.titulo !== "" &&
-        this.livro.preco !== "" &&
-        this.livro.editora !== "" &&
-        this.livro.autor !== "" &&
-        this.livro.categoria !== ""
-      ) {
-        if (this.livro.id) {
-          await axios.patch(
-            `http://localhost:4000/livros/${this.livro.id}`,
-            this.livro
-          );
-          await this.buscarTodosOsLivros();
-        } else {
-          await axios.post(`http://localhost:4000/livros`, this.livro);
-          await this.buscarTodosOsLivros();
-        }
-        this.livro = {};
+      if (this.livro.id) {
+        await axios.patch(
+          `http://localhost:4000/livros/${this.livro.id}`,
+          this.livro
+        );
+        await this.buscarTodosOsLivros();
+      } else {
+        await axios.post(`http://localhost:4000/livros`, this.livro);
+        await this.buscarTodosOsLivros();
       }
+      this.livro = {};
     },
     async excluir(livro) {
       await axios.delete(`http://localhost:4000/livros/${livro.id}`);
@@ -132,13 +121,13 @@ export default {
               {{ livro.titulo }}
             </td>
             <td>
-              {{ livro.autor.nome }}
+              {{ livro.autorId }}
             </td>
             <td>
-              {{ livro.categoria.nome }}
+              {{ livro.categoriaId }}
             </td>
             <td>
-              {{ livro.editora.nome }}
+              {{ livro.editoraId }}
             </td>
             <td>R$ {{ livro.preco }}</td>
             <td>

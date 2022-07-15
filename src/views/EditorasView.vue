@@ -1,62 +1,33 @@
 <script>
-// import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
+import EditorasApi from "../api/editoras";
+const editorasApi = new EditorasApi();
 export default {
   data() {
     return {
       editoras: [],
-      nova_editora: {
-        nome: "",
-        site_lnf: "",
-      },
+      editora: {},
       indice_editar: -1,
     };
   },
   async created() {
-    const editoras = await axios.get("http://localhost:4000/editoras");
-    this.editoras = editoras.data;
+    this.editoras = await editorasApi.buscarTodasAsEditoras();
   },
-
   methods: {
     async salvar() {
-      if (this.nova_editora.nome !== "" && this.nova_editora.site_lnf !== "") {
-        if (this.nova_editora.id) {
-          await axios.patch(
-            `http://localhost:4000/editoras/${this.nova_editora.id}`,
-            {
-              nome: this.nova_editora.nome,
-              site_lnf: this.nova_editora.site_lnf,
-              site_lf: "https://" + this.nova_editora.site_lnf,
-            }
-          );
-          this.editoras.splice(this.indice_editar, 1, this.nova_editora);
-          this.indice_editar = -1;
-        } else {
-          const editora_criada = await axios.post(
-            "http://localhost:4000/editoras",
-            {
-              nome: this.nova_editora.nome,
-              site_lnf: this.nova_editora.site_lnf,
-              site_lf: "https://" + this.nova_editora.site_lnf,
-            }
-          );
-          this.editoras.push(editora_criada.data);
-        }
-        this.nova_editora = {
-          nome: "",
-          site_lnf: "",
-        };
+      if (this.editora.id) {
+        await editorasApi.atualizarEditora(this.editora);
+      } else {
+        await editorasApi.adicionarEditora(this.editora);
       }
+      this.editoras = await editorasApi.buscarTodasAsEditoras();
+      this.editora = {};
     },
     async excluir(editora) {
-      await axios.delete(`http://localhost:4000/editoras/${editora.id}`);
-      const indice = this.editoras.indexOf(editora);
-      this.editoras.splice(indice, 1);
+      await editorasApi.excluirEditora(editora.id);
+      this.editoras = await editorasApi.buscarTodasAsEditoras();
     },
     editar(editora) {
-      const indice = this.editoras.indexOf(editora);
-      this.indice_editar = indice;
-      Object.assign(this.nova_editora, editora);
+      Object.assign(this.editora, editora);
     },
   },
 };
@@ -70,14 +41,14 @@ export default {
     <div class="form-input">
       <input
         @keyup.enter="salvar"
-        v-model="nova_editora.nome"
+        v-model="editora.nome"
         type="text"
         placeholder="Nome do editora"
         class="input-maior"
       />
       <input
         @keyup.enter="salvar"
-        v-model="nova_editora.site_lnf"
+        v-model="editora.site_lnf"
         type="text"
         placeholder="Nome do site"
         class="input-maior"

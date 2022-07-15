@@ -1,53 +1,33 @@
 <script>
-// import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
+import CategoriasApi from "../api/categorias.js";
+const categoriasApi = new CategoriasApi();
 export default {
   data() {
     return {
       categorias: [],
-      nova_categoria: {
-        nome: "",
-      },
+      categoria: {},
       indice_editar: -1,
     };
   },
   async created() {
-    const categorias = await axios.get("http://localhost:4000/categorias");
-    this.categorias = categorias.data;
+    this.categorias = await categoriasApi.buscarTodasAsCategorias();
   },
   methods: {
     async salvar() {
-      if (this.nova_categoria.nome !== "") {
-        if (this.nova_categoria.id) {
-          await axios.patch(
-            `http://localhost:4000/categorias/${this.nova_categoria.id}`,
-            {
-              nome: this.nova_categoria.nome,
-            }
-          );
-          this.categorias.splice(this.indice_editar, 1, this.nova_categoria);
-          this.indice_editar = -1;
-        } else {
-          const categoria_criada = await axios.post(
-            "http://localhost:4000/categorias",
-            this.nova_categoria
-          );
-          this.categorias.push(categoria_criada.data);
-        }
-        this.nova_categoria = {
-          nome: "",
-        };
+      if (this.categoria.id) {
+        await categoriasApi.atualizarCategoria(this.categoria);
+      } else {
+        await categoriasApi.adicionarCategoria(this.categoria);
       }
+      this.categorias = await categoriasApi.buscarTodasAsCategorias();
+      this.categoria = {};
     },
     async excluir(categoria) {
-      await axios.delete(`http://localhost:4000/categorias/${categoria.id}`);
-      const indice = this.categorias.indexOf(categoria);
-      this.categorias.splice(indice, 1);
+      await categoriasApi.excluirCategoria(categoria.id);
+      this.categorias = await categoriasApi.buscarTodasAsCategorias();
     },
     editar(categoria) {
-      const indice = this.categorias.indexOf(categoria);
-      this.indice_editar = indice;
-      Object.assign(this.nova_categoria, categoria);
+      Object.assign(this.categoria, categoria);
     },
   },
 };
@@ -60,7 +40,7 @@ export default {
     <div class="form-input">
       <input
         @keyup.enter="salvar"
-        v-model="nova_categoria.nome"
+        v-model="categoria.nome"
         type="text"
         placeholder="Descrição da categoria"
         class="input-maior"
@@ -68,7 +48,7 @@ export default {
 
       <button @click="salvar">Salvar</button>
     </div>
-    <div class="list-editoras">
+    <div class="list-categorias">
       <table>
         <thead>
           <tr>
