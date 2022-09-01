@@ -1,18 +1,22 @@
 import axios from "axios";
 export default class CategoriasApi {
   async buscarTodasAsCategorias() {
-    const response = await axios.get("http://localhost:4000/Categorias");
+    const response = await axios.get(
+      "https://livraria-aula-backend.herokuapp.com/Categorias"
+    );
     return response.data;
   }
 
   async buscarCategoria(id) {
-    const response = await axios.get(`http://localhost:4000/Categorias/${id}`);
+    const response = await axios.get(
+      `https://livraria-aula-backend.herokuapp.com/Categorias/${id}`
+    );
     return response.data;
   }
 
   async adicionarCategoria(categoria) {
     const response = await axios.post(
-      "http://localhost:4000/Categorias",
+      "https://livraria-aula-backend.herokuapp.com/Categorias",
       categoria
     );
     return response.data;
@@ -20,14 +24,14 @@ export default class CategoriasApi {
 
   async excluirCategoria(id) {
     const response = await axios.delete(
-      `http://localhost:4000/Categorias/${id}`
+      `https://livraria-aula-backend.herokuapp.com/Categorias/${id}`
     );
     return response.data;
   }
 
   async atualizarCategoria(categoria) {
     const response = await axios.put(
-      `http://localhost:4000/Categorias/${categoria.id}`,
+      `https://livraria-aula-backend.herokuapp.com/Categorias/${categoria.id}`,
       categoria
     );
     return response.data;

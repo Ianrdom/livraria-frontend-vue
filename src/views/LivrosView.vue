@@ -13,17 +13,23 @@ export default {
   },
   async created() {
     await this.buscarTodosOsLivros();
-    const editoras = await axios.get("http://localhost:4000/editoras");
+    const editoras = await axios.get(
+      "https://livraria-aula-backend.herokuapp.com/editoras"
+    );
     this.editoras = editoras.data;
-    const categorias = await axios.get("http://localhost:4000/categorias");
+    const categorias = await axios.get(
+      "https://livraria-aula-backend.herokuapp.com/categorias"
+    );
     this.categorias = categorias.data;
-    const autores = await axios.get("http://localhost:4000/autores");
+    const autores = await axios.get(
+      "https://livraria-aula-backend.herokuapp.com/autores"
+    );
     this.autores = autores.data;
   },
   methods: {
     async buscarTodosOsLivros() {
       const livros = await axios.get(
-        "http://localhost:4000/livros?expand=editora&expand=categoria&expand=autore"
+        "https://livraria-aula-backend.herokuapp.com/livros?expand=editora&expand=categoria&expand=autore"
       );
       this.livros = livros.data;
     },
@@ -31,18 +37,23 @@ export default {
     async salvar() {
       if (this.livro.id) {
         await axios.patch(
-          `http://localhost:4000/livros/${this.livro.id}`,
+          `https://livraria-aula-backend.herokuapp.com/livros/${this.livro.id}`,
           this.livro
         );
         await this.buscarTodosOsLivros();
       } else {
-        await axios.post(`http://localhost:4000/livros`, this.livro);
+        await axios.post(
+          `https://livraria-aula-backend.herokuapp.com/livros`,
+          this.livro
+        );
         await this.buscarTodosOsLivros();
       }
       this.livro = {};
     },
     async excluir(livro) {
-      await axios.delete(`http://localhost:4000/livros/${livro.id}`);
+      await axios.delete(
+        `https://livraria-aula-backend.herokuapp.com/livros/${livro.id}`
+      );
       await this.buscarTodosOsLivros();
     },
     editar(livro) {
