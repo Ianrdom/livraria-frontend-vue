@@ -9,25 +9,19 @@ const router = createRouter({
       component: () => import("../views/HomeView.vue"),
     },
     {
-      path: "/livros",
-      name: "livros",
-      component: () => import("../views/LivrosView.vue"),
-    },
-
-    {
-      path: "/editoras",
-      name: "editoras",
-      component: () => import("../views/EditorasView.vue"),
+      path: "/daily_rock",
+      name: "daily_rock",
+      component: () => import("../views/DailyRockView.vue"),
     },
     {
-      path: "/categorias",
-      name: "categorias",
-      component: () => import("../views/CategoriasView.vue"),
+      path: "/resultado",
+      name: "resultado",
+      component: () => import("../views/ResultadoView.vue"),
     },
     {
-      path: "/autores",
-      name: "autores",
-      component: () => import("../views/AutoresView.vue"),
+      path: "/artistas",
+      name: "artistas",
+      component: () => import("../views/ArtistasView.vue"),
     },
   ],
 });
