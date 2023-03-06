@@ -1,41 +1,42 @@
 <script>
-import EditorasApi from "../api/editoras";
-const editorasApi = new EditorasApi();
-export default {
-  data() {
-    return {
-      editoras: [],
-      editora: {},
-      indice_editar: -1,
-    };
-  },
-  async created() {
-    this.editoras = await editorasApi.buscarTodasAsEditoras();
-  },
-  methods: {
-    async salvar() {
-      if (this.editora.id) {
-        await editorasApi.atualizarEditora(this.editora);
-      } else {
-        await editorasApi.adicionarEditora(this.editora);
-      }
-      this.editoras = await editorasApi.buscarTodasAsEditoras();
-      this.editora = {};
+  import EditorasApi from "../api/editoras";
+  const editorasApi = new EditorasApi();
+  export default {
+    data() {
+      return {
+        editoras: [],
+        editora: {},
+        indice_editar: -1,
+      };
     },
-    async excluir(editora) {
-      await editorasApi.excluirEditora(editora.id);
+    async created() {
       this.editoras = await editorasApi.buscarTodasAsEditoras();
     },
-    editar(editora) {
-      Object.assign(this.editora, editora);
+    methods: {
+      async salvar() {
+        if (this.editora.id) {
+          await editorasApi.atualizarEditora(this.editora);
+        } else {
+          await editorasApi.adicionarEditora(this.editora);
+        }
+        this.editoras = await editorasApi.buscarTodasAsEditoras();
+        this.editora = {};
+      },
+      async excluir(editora) {
+        await editorasApi.excluirEditora(editora.id);
+        this.editoras = await editorasApi.buscarTodasAsEditoras();
+      },
+      editar(editora) {
+        Object.assign(this.editora, editora);
+      },
     },
-  },
-};
+  };
 </script>
 
 <template>
   <div class="container">
     <div class="title">
+      {{ editora }}
       <h2>Gerenciamento de Editoras</h2>
     </div>
     <div class="form-input">
@@ -48,7 +49,7 @@ export default {
       />
       <input
         @keyup.enter="salvar"
-        v-model="editora.site_lnf"
+        v-model="editora.site"
         type="text"
         placeholder="Nome do site"
         class="input-maior"
@@ -74,9 +75,7 @@ export default {
               {{ editora.nome }}
             </td>
             <td>
-              <a target="blank" :href="editora.site_lf">
-                {{ editora.site_lnf }}</a
-              >
+              <a target="blank" :href="editora.site"> {{ editora.site }}</a>
             </td>
             <td>
               <button @click="editar(editora)">Editar</button>
