@@ -1,42 +1,41 @@
 <script>
-  import EditorasApi from "../api/editoras";
-  const editorasApi = new EditorasApi();
-  export default {
-    data() {
-      return {
-        editoras: [],
-        editora: {},
-        indice_editar: -1,
-      };
+import EditorasApi from "../api/editoras";
+const editorasApi = new EditorasApi();
+export default {
+  data() {
+    return {
+      editoras: [],
+      editora: {},
+      indice_editar: -1,
+    };
+  },
+  async created() {
+    this.editoras = await editorasApi.buscarTodasAsEditoras();
+  },
+  methods: {
+    async salvar() {
+      if (this.editora.id) {
+        await editorasApi.atualizarEditora(this.editora);
+      } else {
+        await editorasApi.adicionarEditora(this.editora);
+      }
+      this.editoras = await editorasApi.buscarTodasAsEditoras();
+      this.editora = {};
     },
-    async created() {
+    async excluir(editora) {
+      await editorasApi.excluirEditora(editora.id);
       this.editoras = await editorasApi.buscarTodasAsEditoras();
     },
-    methods: {
-      async salvar() {
-        if (this.editora.id) {
-          await editorasApi.atualizarEditora(this.editora);
-        } else {
-          await editorasApi.adicionarEditora(this.editora);
-        }
-        this.editoras = await editorasApi.buscarTodasAsEditoras();
-        this.editora = {};
-      },
-      async excluir(editora) {
-        await editorasApi.excluirEditora(editora.id);
-        this.editoras = await editorasApi.buscarTodasAsEditoras();
-      },
-      editar(editora) {
-        Object.assign(this.editora, editora);
-      },
+    editar(editora) {
+      Object.assign(this.editora, editora);
     },
-  };
+  },
+};
 </script>
 
 <template>
   <div class="container">
     <div class="title">
-      {{ editora }}
       <h2>Gerenciamento de Editoras</h2>
     </div>
     <div class="form-input">
@@ -67,7 +66,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="editora in editoras" :key="editora.id">
+          <tr
+            style="height: 50px"
+            v-for="editora in editoras"
+            :key="editora.id"
+          >
             <td>
               {{ editora.id }}
             </td>
@@ -77,8 +80,10 @@
             <td>
               <a target="blank" :href="editora.site"> {{ editora.site }}</a>
             </td>
-            <td>
-              <button @click="editar(editora)">Editar</button>
+            <td style="min-width: 120px">
+              <button style="margin-right: 5px" @click="editar(editora)">
+                Editar
+              </button>
               <button @click="excluir(editora)">Excluir</button>
             </td>
           </tr>

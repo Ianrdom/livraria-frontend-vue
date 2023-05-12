@@ -1,30 +1,27 @@
 import axios from "axios";
 export default class AutoresApi {
   async buscarTodosOsAutores() {
-    const response = await axios.get("http://localhost:8000/autores/");
-    return response.data;
+    const { data } = await axios.get("/autores/");
+    return data;
   }
 
   async buscarAutor(id) {
-    const response = await axios.get(`http://localhost:8000/autores/${id}`);
-    return response.data;
+    const { data } = await axios.get(`/autores/${id}`);
+    return data;
   }
 
   async adicionarAutor(autor) {
-    const response = await axios.post("http://localhost:8000/autores/", autor);
-    return response.data;
+    const { data } = await axios.post("/autores/", autor);
+    return data;
   }
 
   async excluirAutor(id) {
-    const response = await axios.delete(`http://localhost:8000/autores/${id}`);
-    return response.data;
+    const { data } = await axios.delete(`/autores/${id}`);
+    return data;
   }
 
   async atualizarAutor(autor) {
-    const response = await axios.put(
-      `http://localhost:8000/autores/${autor.id}`,
-      autor
-    );
-    return response.data;
+    const { data } = await axios.put(`/autores/${autor.id}`, autor);
+    return data;
   }
 }

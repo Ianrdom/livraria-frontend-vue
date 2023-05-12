@@ -1,35 +1,27 @@
 import axios from "axios";
 export default class CategoriasApi {
   async buscarTodasAsCategorias() {
-    const response = await axios.get("http://localhost:8000/categorias/");
-    return response.data;
+    const { data } = await axios.get("/categorias/");
+    return data;
   }
 
   async buscarCategoria(id) {
-    const response = await axios.get(`http://localhost:8000/categorias/${id}`);
-    return response.data;
+    const { data } = await axios.get(`/categorias/${id}`);
+    return data;
   }
 
   async adicionarCategoria(categoria) {
-    const response = await axios.post(
-      "http://localhost:8000/categorias/",
-      categoria
-    );
-    return response.data;
+    const { data } = await axios.post("/categorias/", categoria);
+    return data;
   }
 
   async excluirCategoria(id) {
-    const response = await axios.delete(
-      `http://localhost:8000/categorias/${id}`
-    );
-    return response.data;
+    const { data } = await axios.delete(`/categorias/${id}`);
+    return data;
   }
 
   async atualizarCategoria(categoria) {
-    const response = await axios.put(
-      `http://localhost:8000/categorias/${categoria.id}`,
-      categoria
-    );
-    return response.data;
+    const { data } = await axios.put(`/categorias/${categoria.id}`, categoria);
+    return data;
   }
 }

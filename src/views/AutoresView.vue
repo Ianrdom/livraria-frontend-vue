@@ -1,41 +1,40 @@
 <script>
-  import AutoresApi from "../api/autores";
-  const autoresApi = new AutoresApi();
-  export default {
-    data() {
-      return {
-        autores: [],
-        autor: {},
-        indice_editar: -1,
-      };
+import AutoresApi from "../api/autores";
+const autoresApi = new AutoresApi();
+export default {
+  data() {
+    return {
+      autores: [],
+      autor: {},
+      indice_editar: -1,
+    };
+  },
+  async created() {
+    this.autores = await autoresApi.buscarTodosOsAutores();
+  },
+  methods: {
+    async salvar() {
+      if (this.autor.id) {
+        await autoresApi.atualizarAutor(this.autor);
+      } else {
+        await autoresApi.adicionarAutor(this.autor);
+      }
+      this.autores = await autoresApi.buscarTodosOsAutores();
+      this.autor = {};
     },
-    async created() {
+    async excluir(autor) {
+      await autoresApi.excluirAutor(autor.id);
       this.autores = await autoresApi.buscarTodosOsAutores();
     },
-    methods: {
-      async salvar() {
-        if (this.autor.id) {
-          await autoresApi.atualizarAutor(this.autor);
-        } else {
-          await autoresApi.adicionarAutor(this.autor);
-        }
-        this.autores = await autoresApi.buscarTodosOsAutores();
-        this.autor = {};
-      },
-      async excluir(autor) {
-        await autoresApi.excluirAutor(autor.id);
-        this.autores = await autoresApi.buscarTodosOsAutores();
-      },
-      editar(autor) {
-        Object.assign(this.autor, autor);
-      },
+    editar(autor) {
+      Object.assign(this.autor, autor);
     },
-  };
+  },
+};
 </script>
 <template>
   <div class="container">
     <div class="title">
-      {{ autor }}
       <h2>Gerenciamento de autores</h2>
     </div>
     <div class="form-input">
@@ -67,7 +66,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="autor in autores" :key="autor.id">
+          <tr style="height: 50px" v-for="autor in autores" :key="autor.id">
             <td>
               {{ autor.id }}
             </td>
@@ -77,8 +76,10 @@
             <td>
               {{ autor.email }}
             </td>
-            <td>
-              <button @click="editar(autor)">Editar</button>
+            <td style="min-width: 120px">
+              <button style="margin-right: 5px" @click="editar(autor)">
+                Editar
+              </button>
               <button @click="excluir(autor)">Excluir</button>
             </td>
           </tr>
